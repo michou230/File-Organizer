@@ -1,0 +1,16 @@
+#python cache
+__pycache__/
+*.pyc
+
+#VE
+venv/
+.venv/
+
+#Pyinstaller
+build/
+dist/
+*.spec
+
+#IDE
+.vscode/
+.idea/
