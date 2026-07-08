@@ -18,3 +18,6 @@ Just run this line for these requirements:
 ```pip install -r requirements.txt```
 
 then run *ui.py* for the actual app.
+
+## LICENSE:
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
