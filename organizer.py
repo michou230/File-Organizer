@@ -29,5 +29,12 @@ def organize_files(directory):
                 shutil.move(full_path, os.path.join(destination, file))
                 print("Moved:", file, "to", folder)
                 break
+            else:
+                destination = os.path.join(directory, "Others")
+                if not os.path.exists(destination):
+                    os.makedirs(destination)
+                shutil.move(full_path, os.path.join(destination, file))
+                print("Moved:", file, "to Others")
+                break
 
    
