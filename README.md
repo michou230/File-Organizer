@@ -11,6 +11,7 @@ Files include: **Images, Videos, Documents, PDF, Music, Data, Archive and Execut
 Any other extensions not included will be added in a folder called **Others**
 If you wish an extension to be added just reach out to me ^^
 
+Note: You CANNOT undo the changes so choose the folder you want to sort carefully.
 ## Requirements
 - Python 3.10+
 - CustomTkinter
@@ -18,6 +19,10 @@ If you wish an extension to be added just reach out to me ^^
 Just run this line for these requirements:
 
 ```pip install -r requirements.txt```
+
+or
+
+```python -m pip install -r requirements.txt```
 
 then run *ui.py* for the actual app.
 
