@@ -6,10 +6,16 @@ from organizer import organize_files_by_extension, organize_by_name, organize_al
 
 ##IMAGE
 
-back_icon = ctk.CTkImage(
-    light_image = Image.open("back.png"),
+extension_back_icon = ctk.CTkImage(
+    light_image = Image.open("blue_back.png"),
     size = (35, 35)
 )
+
+name_back_icon = ctk.CTkImage(
+    light_image = Image.open("pink_back.png"),
+    size = (35, 35)
+)
+
 ############################FUNCTIONS
 selected_folder = ""
 def choose_folder():
@@ -20,12 +26,8 @@ def choose_folder():
         label.configure(
         text=selected_folder,
         font = ("Segoe UI", 14, "bold"),
-        text_color = "#8AD2DC",
-        fg_color = "#000000",
-        corner_radius = 10,
-        width = 400,
-        height = 40
-                )
+        text_color = "#639BA2",
+        )
                            
 def back_btn():
     show_main_page()
@@ -44,10 +46,6 @@ def operation_done():
         text="Operation done ^^ files organized successfully.",
         font = ("Segoe UI", 14, "bold"),
         text_color = "#4B905D",
-        fg_color = "#000000",
-        corner_radius = 10,
-        width = 400,
-        height = 40
         )
     app.after(5000, lambda: reset())
     os.startfile(selected_folder)
@@ -57,11 +55,7 @@ def operation_cancelled():
         label.configure(
         text="Operation cancelled.",
         font = ("Segoe UI", 14, "bold"),
-        text_color = "#AC4242",
-        fg_color = "#000000",
-        corner_radius = 10,
-        width = 400,
-        height = 40
+        text_color = "#C25A5A",
         )
     app.after(3000, lambda: reset())
     
@@ -71,10 +65,6 @@ def no_folder_selected():
         text="No folder selected. Please choose a folder first.",
         font = ("Segoe UI", 14, "bold"),
         text_color = "#AC4242",
-        fg_color = "#000000",
-        corner_radius = 10,
-        width = 400,
-        height = 40
         )
     
 
@@ -114,9 +104,14 @@ def name_organize():
                     messagebox.showwarning(
                     "No files found",
                     f"No files matching '{name}' were found.")
-            else:
+            elif mode == "all":
                 organize_all(selected_folder)
                 operation_done()
+            else:
+                messagebox.showinfo(
+                "No option selected",
+                "Please choose a name organization method first."
+            )
         else:
             operation_cancelled()
         
@@ -129,10 +124,6 @@ def reset():
         text="No folder selected",
         font = ("Segoe UI", 14, "bold"),
         text_color = "#616766",
-        fg_color = "#000000",
-        corner_radius = 10,
-        width = 400,
-        height = 40
         )
         
 
@@ -144,7 +135,7 @@ ctk.set_default_color_theme("dark-blue")
 app  = ctk.CTk()
 app.title("File Organizer")
 app.geometry("600x400")
-
+app.resizable(False, False)
 
 def show_main_page():
     main_frame.pack(fill = "both", expand = True)
@@ -165,12 +156,18 @@ def show_extension_page():
 
 #####################################################################MAIN PAGE
 
-main_frame = ctk.CTkFrame(app)
+main_frame = ctk.CTkFrame(
+    app,
+    fg_color= "#064B3C",
+    )
 main_frame.pack(fill="both", expand=True)
+
 
 title = ctk.CTkLabel(
     main_frame,
     text="File Organizer",
+    fg_color="transparent",
+    text_color="#71BDAC",
     font = ("Times New Roman", 24, "italic")
     )
 title.pack(pady=30)
@@ -183,8 +180,9 @@ extension_button = ctk.CTkButton(
     height = 50,
     corner_radius = 15,
     font = ("Times New Roman", 16),                   
-    fg_color = "#909320",                   
-    hover_color = "#CB911D"
+    fg_color = "#020444",                   
+    hover_color = "#1C1E5F",
+    text_color="#51E1EC"
      )
 extension_button.pack(pady=30)
 
@@ -195,51 +193,65 @@ name_button = ctk.CTkButton(
     height = 50,
     corner_radius = 15,
     font = ("Times New Roman", 16),                   
-    fg_color = "#B63C50",                   
-    hover_color = "#89364B",
+    fg_color = "#2B0852",                   
+    hover_color = "#37175C",
+    text_color="#AA5984",
     command = show_name_page
 )
 name_button.pack(pady = 10)
 
 #############################################################organize by name frame
 radio_var = ctk.StringVar()
-name_frame = ctk.CTkFrame(app)
+name_frame = ctk.CTkFrame(
+    app,
+    fg_color="#2B0852"
+    )
 
 title2 = ctk.CTkLabel(
     name_frame,
     text = "Organize by name",
-    font = ("Times New Roman", 24, "italic")
+    font = ("Times New Roman", 24, "italic", "bold"),
+    text_color="#AA5984"
 )
 title2.pack(pady=15)
 
 description = ctk.CTkLabel(
     name_frame,
     text = "Select an option.",
-    font = ("Times New Roman", 20, "bold")
+    font = ("Times New Roman", 12, "bold"),
+    text_color="#AA5984"
 )
-description.pack(pady=5)
+description.pack()
 
 all_button = ctk.CTkRadioButton(
     name_frame,
     text = "Group all matching names",
-    font= ("Segoe UI", 16),
-    radiobutton_width = 30,
-    radiobutton_height = 30,
+    font= ("Segoe UI", 17),
+    radiobutton_width = 15,
+    radiobutton_height = 15,
     hover=True,
     variable = radio_var,
-    value = "all"
+    value = "all",
+    text_color="#AE1E6B",
+    fg_color="#3D0A25",
+    border_color="#E77FB6",
+    hover_color="#F04AA2"
 )
-all_button.pack()
+all_button.pack(pady = 10)
 
 custom_button = ctk.CTkRadioButton(
     name_frame,
     text = "Submit a specific name",
-    font= ("Segoe UI", 16),
-    radiobutton_width = 30,
-    radiobutton_height = 30,
+    font= ("Segoe UI", 17),
+    radiobutton_width = 15,
+    radiobutton_height = 15,
     hover=True,
     variable = radio_var,
-    value = "custom"
+    value = "custom",
+    text_color="#AE1E6B",
+    fg_color="#3D0A25",
+    border_color="#E77FB6",
+    hover_color="#F04AA2"
 )
 custom_button.pack(pady = 10)
 
@@ -248,11 +260,12 @@ name_org_button = ctk.CTkButton(
     text="🔁 Organize Files", 
     command= name_organize,
     width = 200,
-    height = 35,
+    height = 50,
     corner_radius = 15,
     font = ("Times New Roman", 16),                   
-    fg_color = "#44838B",                   
-    hover_color = "#71B8C1"                 
+    fg_color = "#5200AF",                   
+    hover_color = "#690BD4",
+    text_color="#C08AFE"                 
     )
 name_org_button.pack(pady= 20)
 
@@ -261,13 +274,14 @@ browse_button = ctk.CTkButton(
     text="📂 Choose Folder",
     command=choose_folder,
     width = 200,
-    height = 35,
+    height = 50,
     corner_radius = 15,
     font = ("Times New Roman", 16),                   
-    fg_color = "#35163F",                   
+    fg_color = "#61107C",                   
     hover_color = "#4F245D",  
+    text_color="#F89BFF"
     )
-browse_button.pack(pady = 5)
+browse_button.pack(pady = 10)
 
 # FOLDER LABEL 
 folder_label_name = ctk.CTkLabel(
@@ -275,7 +289,7 @@ folder_label_name = ctk.CTkLabel(
     text="No folder selected",
     font = ("Segoe UI", 14, "bold"),
     text_color = "#616766",
-    fg_color = "#000000",
+    fg_color = "#410B27",
     corner_radius = 10,
     width = 400,
     height = 40
@@ -285,7 +299,7 @@ folder_label_name.pack(pady=10)
 back_button = ctk.CTkButton(
     name_frame,
     text = "",
-    image = back_icon,
+    image = name_back_icon,
     width = 40,
     command = back_btn,
     fg_color="transparent"
@@ -294,12 +308,16 @@ back_button.place(x= 15, y=15)
 
 ##############################################################organize by extension frame
 
-extension_frame = ctk.CTkFrame(app)
+extension_frame = ctk.CTkFrame(
+    app,
+    fg_color="#020444"
+    )
 
 title2 = ctk.CTkLabel(
     extension_frame,
     text = "Organize by extension",
-    font = ("Times New Roman", 24, "italic")
+    font = ("Times New Roman", 24, "italic"),
+    text_color="#51E1EC"
 )
 title2.pack(pady=25)
 
@@ -313,8 +331,9 @@ ex_org_button = ctk.CTkButton(
     height = 50,
     corner_radius = 15,
     font = ("Times New Roman", 16),                   
-    fg_color = "#44838B",                   
-    hover_color = "#71B8C1"                 
+    fg_color = "#0C0F6B",                   
+    hover_color = "#303387",
+    text_color= "#51E1EC"           
     )
 ex_org_button.pack(pady=10)
 
@@ -327,8 +346,9 @@ browse_button = ctk.CTkButton(
     height = 50,
     corner_radius = 15,
     font = ("Times New Roman", 16),                   
-    fg_color = "#35163F",                   
-    hover_color = "#4F245D",  
+    fg_color = "#3357C2",                   
+    hover_color = "#1438A4",  
+    text_color="#809CF1"
     )
 browse_button.pack(pady = 30)
 
@@ -337,8 +357,8 @@ folder_label_extension = ctk.CTkLabel(
     extension_frame, 
     text="No folder selected",
     font = ("Segoe UI", 14, "bold"),
-    text_color = "#616766",
-    fg_color = "#000000",
+    text_color = "#363938",
+    fg_color = "#398DA4",
     corner_radius = 10,
     width = 400,
     height = 40
@@ -348,12 +368,13 @@ folder_label_extension.pack(pady=10)
 back_button = ctk.CTkButton(
     extension_frame,
     text = "",
-    image = back_icon,
+    image = extension_back_icon,
     width = 40,
     command = back_btn,
     fg_color="transparent"
 )
 back_button.place(x=15, y=15)
+
 
 #EXE
 app.mainloop()
