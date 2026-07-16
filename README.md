@@ -7,11 +7,11 @@ This is a python desktop app that automatically organizes files into folders bas
 - Automatic file sorting
 - Windows executable support
 
-Files include: **Images, Videos, Documents, PDF, Music, Data, Archive and Executables**
-Any other extensions not included will be added in a folder called **Others**
+Files include: **Images, Videos, Documents, PDF, Music, Data, Archive and Executables**.<br>
+Any other extensions not included will be added in a folder called **Others**.<br>
 If you wish an extension to be added just reach out to me ^^
 
-Note: You CANNOT undo the changes so choose the folder you want to sort carefully.
+Note: You CANNOT undo the changes so choose the folder you want to sort carefully.<br>
 Note2: Supports Windows, Mac and Linux.
 ## Requirements
 - Python 3.10+
