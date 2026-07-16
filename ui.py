@@ -16,6 +16,16 @@ name_back_icon = ctk.CTkImage(
     size = (35, 35)
 )
 
+info_back_icon = ctk.CTkImage(
+    light_image = Image.open("green_back.png"),
+    size = (35, 35)
+)
+
+info_about_icon = ctk.CTkImage(
+    light_image = Image.open("about.png"),
+    size = (35, 35)
+)
+
 ############################FUNCTIONS
 selected_folder = ""
 def choose_folder():
@@ -141,18 +151,28 @@ def show_main_page():
     main_frame.pack(fill = "both", expand = True)
     name_frame.pack_forget()
     extension_frame.pack_forget()
+    info_frame.pack_forget()
 
 
 def show_name_page():
     main_frame.pack_forget()
     extension_frame.pack_forget()
+    info_frame.pack_forget()
     name_frame.pack(fill = "both", expand = True)
     
 
 def show_extension_page():
     main_frame.pack_forget()
     name_frame.pack_forget()
+    info_frame.pack_forget()
     extension_frame.pack(fill = "both", expand = True)
+
+
+def show_info_page():
+    main_frame.pack_forget()
+    name_frame.pack_forget()
+    extension_frame.pack_forget()
+    info_frame.pack(fill = "both", expand = True)
 
 #####################################################################MAIN PAGE
 
@@ -199,6 +219,16 @@ name_button = ctk.CTkButton(
     command = show_name_page
 )
 name_button.pack(pady = 10)
+
+about_button = ctk.CTkButton(
+    main_frame,
+    text = "",
+    image = info_about_icon,
+    width = 40,
+    command = show_info_page,
+    fg_color="transparent"
+)
+about_button.place(x=550, y=0)
 
 #############################################################organize by name frame
 radio_var = ctk.StringVar()
@@ -289,7 +319,7 @@ folder_label_name = ctk.CTkLabel(
     text="No folder selected",
     font = ("Segoe UI", 14, "bold"),
     text_color = "#616766",
-    fg_color = "#410B27",
+    fg_color = "#2C0B41",
     corner_radius = 10,
     width = 400,
     height = 40
@@ -375,6 +405,57 @@ back_button = ctk.CTkButton(
 )
 back_button.place(x=15, y=15)
 
+#########################################################info frame
+info_frame = ctk.CTkFrame(
+    app,
+    fg_color="#064B3C"
+    )
+
+title3 = ctk.CTkLabel(
+    info_frame,
+    text = "About",
+    font = ("Times New Roman", 24, "italic", "bold"),
+    text_color="#71bdac"
+)
+title3.pack(pady=15)
+
+description1 = ctk.CTkLabel(
+    info_frame,
+    text="""File Organizer is a simple application that helps you sort your files into folders.
+
+    
+    Current features include automatic sorting (by name or extension) or custom name sorting.
+
+    
+    If you find any bugs or issues please contact me on GitHub (michou230)
+
+    
+    You can use this app however you want as long as you follow the License set with it.
+
+    
+    Enjoy ^^
+
+    
+    Hope it actually helped :p
+""",
+    font=("Times New Roman", 14),
+    wraplength=515,
+    justify="center",
+    text_color="#94c9b9"
+)
+
+description1.pack(pady=20)
+
+
+back_button = ctk.CTkButton(
+    info_frame,
+    text = "",
+    image = info_back_icon,
+    width = 40,
+    command = back_btn,
+    fg_color="transparent"
+)
+back_button.place(x=15, y=15)
 
 #EXE
 app.mainloop()
