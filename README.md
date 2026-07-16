@@ -1,6 +1,6 @@
 # File Organizer
 
-This is a python desktop app that automatically organizes files into folders based on their extension.
+This is a python desktop app that automatically organizes files into folders based on their extension or group them by name (manual name submission or automatic name detection).
 
 ## Features
 - GUI with CustomTkinter
@@ -8,6 +8,8 @@ This is a python desktop app that automatically organizes files into folders bas
 - Windows executable support
 
 Files include: **Images, Videos, Documents, PDF, Music, Data, Archive and Executables**
+Any other extensions not included will be added in a folder called **Others**
+If you wish an extension to be added just reach out to me ^^
 
 ## Requirements
 - Python 3.10+
