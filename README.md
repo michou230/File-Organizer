@@ -5,7 +5,8 @@ This is a python desktop app that automatically organizes files into folders bas
 ## Features
 - GUI with CustomTkinter
 - Automatic file sorting
-- Windows executable support
+- Cross-Platform suuport
+- Executable app build support
 
 Files include: **Images, Videos, Documents, PDF, Music, Data, Archive and Executables**.<br>
 Any other extensions not included will be added in a folder called **Others**.<br>
