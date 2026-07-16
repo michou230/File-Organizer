@@ -20,17 +20,15 @@ Note2: Supports Windows, Mac and Linux.
 
 Just run this line for these requirements:
 
-```pip install -r requirements.txt``` or ```python -m pip install -r requirements.txt```
+```python -m pip install -r requirements.txt```
 
-or (if the above fails)
-
-```pip install customtkinter==5.2.2``` or ```python -m pip install customtkinter==5.2.2```
+for Mac/Linux, if the above command or the upcoming one fails, change "python" to "python3"
 
 then run *Organizer.py* for the actual app.
 
 If you wish to make the app an executable please follow these steps:
 - Download pyinstaller via:
- ```pip install pyinstaller``` or ```python -m pip install pyinstaller```
+ ```python -m pip install pyinstaller```
 - Make sure you are in the **Organizer.py** file and open the terminal.
 - Run the next command based on your OS
 
