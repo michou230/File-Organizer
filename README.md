@@ -12,19 +12,37 @@ Any other extensions not included will be added in a folder called **Others**
 If you wish an extension to be added just reach out to me ^^
 
 Note: You CANNOT undo the changes so choose the folder you want to sort carefully.
+Note2: Supports Windows, Mac and Linux.
 ## Requirements
 - Python 3.10+
 - CustomTkinter
 
 Just run this line for these requirements:
 
-```pip install -r requirements.txt```
+```pip install -r requirements.txt``` or ```python -m pip install -r requirements.txt```
 
-or
+or (if the above fails)
 
-```python -m pip install -r requirements.txt```
+```pip install customtkinter==5.2.2``` or ```python -m pip install customtkinter==5.2.2```
 
-then run *ui.py* for the actual app.
+then run *Organizer.py* for the actual app.
+
+If you wish to make the app an executable please follow these steps:
+- Download pyinstaller via:
+ ```pip install pyinstaller``` or ```python -m pip install pyinstaller```
+- Make sure you are in the **Organizer.py** file and open the terminal.
+- Run the next command based on your OS
+
+### Windows
+```pyinstaller --onefile --windowed --icon="Assets/favicon.ico" --add-data "assets;assets" Organizer.py```
+
+### Mac
+```pyinstaller --onefile --icon="Assets/favicon.icns" --add-data "assets:assets" Organizer.py```
+
+### Linux
+```pyinstaller --onefile --windowed --icon="Assets/favicon.png" --add-data "assets:assets" Organizer.py```
+
+Then you can find the executable app in the "dist" folder.
 
 ## LICENSE:
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
