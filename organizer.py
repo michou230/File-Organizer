@@ -1,83 +1,482 @@
+import customtkinter as ctk
+from tkinter import filedialog, messagebox
 import os
-import shutil 
+import platform
+import subprocess
+from PIL import Image
+from main_code import organize_files_by_extension, organize_by_name, organize_all
+import sys
+
+##IMAGE
+
+def assets_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 
+extension_back_icon = ctk.CTkImage(
+    light_image = Image.open(assets_path("Assets/blue_back.png")),
+    size = (35, 35)
+)
 
-file_extensions = {
-    'PDFs' : ['.pdf', '.pdf/a'],
-    'Images' : ['.jpeg', '.jpg', '.gif', '.png', '.jfif', '.svg', '.webp', '.tiff', '.bmp', '.tif', '.heic', '.psd', '.ai', '.raw', '.cr2', '.nef', '.ico', 'eps', '.indd'],
-    'Documents' : ['.doc', '.docx', '.txt', '.rtf', '.pages', '.odt', '.md', '.epub', '.mobi', '.tex', '.ppt', '.pptx', '.wpd', '.log', '.py'],
-    'Videos' : ['.mp4', '.mkv', '.avi', '.flv', '.wmv', '.mov', '.webm', '.vob', '.mpeg', '.mpg', '.3gp', '.m4v', '.divx', '.ogv', '.mts', '.m2ts', '.hevc'],
-    'Music' : ['.mp3', '.wav', '.flac', '.m4a', '.aac', '.wma', '.ogg', '.alac', '.aiff', '.opus', '.amr', '.mid', '.midi', '.aif', '.aifc', '.ape', '.m4b'],
-    'Executables' : ['.exe', '.msi', '.bat', '.cmd', '.ps1', '.scr', '.sh'],
-    'Archives' : ['.zip', '.rar', '.tar', '.gz', '.7z', '.rar5', '.iso', '.sitx', '.dmg', '.cab', '.pkg', '.apk', '.bz2'],
-    'Data' : ['.csv', '.json', '.xml', '.sql', '.xlsx', '.xls', '.ods', '.tsv', '.db', '.sqlite', '.yaml', '.yml', '.parquet', '.hdf5', '.sas7bdat', '.sav'],
-}
+name_back_icon = ctk.CTkImage(
+    light_image = Image.open(assets_path("Assets/pink_back.png")),
+    size = (35, 35)
+)
 
-def organize_files_by_extension(directory):
-    for file in os.listdir(directory):
-        full_path = os.path.join(directory, file)
+info_back_icon = ctk.CTkImage(
+    light_image = Image.open(assets_path("Assets/green_back.png")),
+    size = (35, 35)
+)
 
-        if not os.path.isfile(full_path):
-            continue 
-            
-        extension = os.path.splitext(file)[1].lower()
-        moved = False
-        
-        for folder, extensions in file_extensions.items():
-            if extension in extensions:
-                destination = os.path.join(directory, folder)
-                os.makedirs(destination, exist_ok=True)
+info_about_icon = ctk.CTkImage(
+    light_image = Image.open(assets_path("Assets/about.png")),
+    size = (35, 35)
+)
 
-                shutil.move(full_path, os.path.join(destination, file))
-                moved = True
-                break
-
-        if not moved:
-            destination = os.path.join(directory, "Others")
-            os.makedirs(destination, exist_ok=True)
-            shutil.move(full_path, os.path.join(destination, file))
-
-
-def organize_by_name(directory, name):
-    folder_path = os.path.join(directory, name)
+############################FUNCTIONS
+selected_folder = ""
+def choose_folder():
+    global selected_folder
     
-    found = False
+    selected_folder = filedialog.askdirectory()
+    for label in [folder_label_name, folder_label_extension]:
+        label.configure(
+        text=selected_folder,
+        font = ("Segoe UI", 14, "bold"),
+        text_color = "#639BA2",
+        )
+                           
+def back_btn():
+    show_main_page()
+    reset()
 
-    for file in os.listdir(directory):
+def open_folder(path):
+    system = platform.system()
 
-        old_path = os.path.join(directory, file)
-        file_name = os.path.splitext(file)[0]
+    if system == "Windows":
+        os.startfile(path)
+    elif system == "Darwin":
+        subprocess.run(["open", path])
+    elif system == "Linux":
+        subprocess.run(["xdg-open", path])
 
-        if os.path.isfile(old_path) and file_name.lower() == name.lower():
-            if not found:
-                os.makedirs(folder_path, exist_ok=True)
-                found = True
-            new_path = os.path.join(folder_path, file)
-            shutil.move(old_path, new_path)
+def confirmation():
+    answer = messagebox.askyesno("Confirm", "Are you sure you want to organize the files in this folder?")
+    if answer:
+        return True
+    else:
+        return False
 
-    return found
-       
+def operation_done():
+    for label in [folder_label_name, folder_label_extension]:
+        label.configure(
+        text="Operation done ^^ files organized successfully.",
+        font = ("Segoe UI", 14, "bold"),
+        text_color = "#4B905D",
+        )
+    app.after(5000, lambda: reset())
+    open_folder(selected_folder)
+
+def operation_cancelled():
+    for label in [folder_label_name, folder_label_extension]:
+        label.configure(
+        text="Operation cancelled.",
+        font = ("Segoe UI", 14, "bold"),
+        text_color = "#C25A5A",
+        )
+    app.after(3000, lambda: reset())
+    
+def no_folder_selected():
+    for label in [folder_label_name, folder_label_extension]:
+        label.configure(
+        text="No folder selected. Please choose a folder first.",
+        font = ("Segoe UI", 14, "bold"),
+        text_color = "#AC4242",
+        )
+    
+
+def extension_organize():
+    if not selected_folder:
+        no_folder_selected()
+    else:
+        answer = confirmation()
+        if answer == True:
+            organize_files_by_extension(selected_folder)
+            operation_done()
+        else:
+            operation_cancelled()
+
+def name_organize():
+    if not selected_folder:
+        no_folder_selected()
+    else:
+        answer = confirmation()
+        if answer == True:
+            mode = radio_var.get()
+            if mode == "custom":
+                dialog = ctk.CTkInputDialog(text="Enter the file name to organize by:", title="File Name")
+                name = dialog.get_input()
+                if not name or not name.strip():
+                    messagebox.showwarning(
+                    "Invalid Name",
+                    "Please enter a valid name."
+                    )
+                    return
                 
-def organize_all(directory):
-    groups = {}
+                name = name.strip()
+                success = organize_by_name(selected_folder, name)
+                if success:
+                    operation_done()
+                else:
+                    messagebox.showwarning(
+                    "No files found",
+                    f"No files matching '{name}' were found.")
+            elif mode == "all":
+                organize_all(selected_folder)
+                operation_done()
+            else:
+                messagebox.showinfo(
+                "No option selected",
+                "Please choose a name organization method first."
+            )
+        else:
+            operation_cancelled()
+        
 
-    for file in os.listdir(directory):
-        name = os.path.splitext(file)[0]
+def reset():
+    global selected_folder
+    selected_folder = ""
+    for label in [folder_label_name, folder_label_extension]:
+        label.configure(
+        text="No folder selected",
+        font = ("Segoe UI", 14, "bold"),
+        text_color = "#616766",
+        )
+        
 
-        if name not in groups:
-            groups[name] = []
-        groups[name].append(file)
+#Appearance
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("dark-blue")
 
-    for name, files in groups.items():
-        destination = os.path.join(directory, name)
-        os.makedirs(destination, exist_ok=True)
+#Window
+app  = ctk.CTk()
+app.title("File Organizer")
+app.geometry("600x400")
+app.resizable(False, False)
 
-        for file in files:
-            old_path = os.path.join(directory, file)
+def show_main_page():
+    main_frame.pack(fill = "both", expand = True)
+    name_frame.pack_forget()
+    extension_frame.pack_forget()
+    info_frame.pack_forget()
 
-            if os.path.isdir(old_path):
-                continue
 
-            new_path = os.path.join(destination, file)
-            shutil.move(old_path, new_path)
+def show_name_page():
+    main_frame.pack_forget()
+    extension_frame.pack_forget()
+    info_frame.pack_forget()
+    name_frame.pack(fill = "both", expand = True)
+    
+
+def show_extension_page():
+    main_frame.pack_forget()
+    name_frame.pack_forget()
+    info_frame.pack_forget()
+    extension_frame.pack(fill = "both", expand = True)
+
+
+def show_info_page():
+    main_frame.pack_forget()
+    name_frame.pack_forget()
+    extension_frame.pack_forget()
+    info_frame.pack(fill = "both", expand = True)
+
+#####################################################################MAIN PAGE
+
+main_frame = ctk.CTkFrame(
+    app,
+    fg_color= "#064B3C",
+    )
+main_frame.pack(fill="both", expand=True)
+
+
+title = ctk.CTkLabel(
+    main_frame,
+    text="File Organizer",
+    fg_color="transparent",
+    text_color="#71BDAC",
+    font = ("Times New Roman", 24, "italic")
+    )
+title.pack(pady=30)
+
+extension_button = ctk.CTkButton(
+    main_frame, 
+    text="Organize by extension", 
+    command=show_extension_page,
+    width = 200,
+    height = 50,
+    corner_radius = 15,
+    font = ("Times New Roman", 16),                   
+    fg_color = "#020444",                   
+    hover_color = "#1C1E5F",
+    text_color="#51E1EC"
+     )
+extension_button.pack(pady=30)
+
+name_button = ctk.CTkButton(
+    main_frame,
+    text="Organize by name", 
+    width = 200,
+    height = 50,
+    corner_radius = 15,
+    font = ("Times New Roman", 16),                   
+    fg_color = "#2B0852",                   
+    hover_color = "#37175C",
+    text_color="#AA5984",
+    command = show_name_page
+)
+name_button.pack(pady = 10)
+
+about_button = ctk.CTkButton(
+    main_frame,
+    text = "",
+    image = info_about_icon,
+    width = 40,
+    command = show_info_page,
+    fg_color="transparent"
+)
+about_button.place(x=550, y=0)
+
+#############################################################organize by name frame
+radio_var = ctk.StringVar()
+name_frame = ctk.CTkFrame(
+    app,
+    fg_color="#2B0852"
+    )
+
+title2 = ctk.CTkLabel(
+    name_frame,
+    text = "Organize by name",
+    font = ("Times New Roman", 24, "italic", "bold"),
+    text_color="#AA5984"
+)
+title2.pack(pady=15)
+
+description = ctk.CTkLabel(
+    name_frame,
+    text = "Select an option.",
+    font = ("Times New Roman", 12, "bold"),
+    text_color="#AA5984"
+)
+description.pack()
+
+all_button = ctk.CTkRadioButton(
+    name_frame,
+    text = "Group all matching names",
+    font= ("Segoe UI", 17),
+    radiobutton_width = 15,
+    radiobutton_height = 15,
+    hover=True,
+    variable = radio_var,
+    value = "all",
+    text_color="#AE1E6B",
+    fg_color="#3D0A25",
+    border_color="#E77FB6",
+    hover_color="#F04AA2"
+)
+all_button.pack(pady = 10)
+
+custom_button = ctk.CTkRadioButton(
+    name_frame,
+    text = "Submit a specific name",
+    font= ("Segoe UI", 17),
+    radiobutton_width = 15,
+    radiobutton_height = 15,
+    hover=True,
+    variable = radio_var,
+    value = "custom",
+    text_color="#AE1E6B",
+    fg_color="#3D0A25",
+    border_color="#E77FB6",
+    hover_color="#F04AA2"
+)
+custom_button.pack(pady = 10)
+
+name_org_button = ctk.CTkButton(
+    name_frame, 
+    text="🔁 Organize Files", 
+    command= name_organize,
+    width = 200,
+    height = 50,
+    corner_radius = 15,
+    font = ("Times New Roman", 16),                   
+    fg_color = "#5200AF",                   
+    hover_color = "#690BD4",
+    text_color="#C08AFE"                 
+    )
+name_org_button.pack(pady= 20)
+
+browse_button = ctk.CTkButton(
+    name_frame,
+    text="📂 Choose Folder",
+    command=choose_folder,
+    width = 200,
+    height = 50,
+    corner_radius = 15,
+    font = ("Times New Roman", 16),                   
+    fg_color = "#61107C",                   
+    hover_color = "#4F245D",  
+    text_color="#F89BFF"
+    )
+browse_button.pack(pady = 10)
+
+# FOLDER LABEL 
+folder_label_name = ctk.CTkLabel(
+    name_frame, 
+    text="No folder selected",
+    font = ("Segoe UI", 14, "bold"),
+    text_color = "#616766",
+    fg_color = "#2C0B41",
+    corner_radius = 10,
+    width = 400,
+    height = 40
+    )
+folder_label_name.pack(pady=10)
+
+back_button = ctk.CTkButton(
+    name_frame,
+    text = "",
+    image = name_back_icon,
+    width = 40,
+    command = back_btn,
+    fg_color="transparent"
+)
+back_button.place(x= 15, y=15)
+
+##############################################################organize by extension frame
+
+extension_frame = ctk.CTkFrame(
+    app,
+    fg_color="#020444"
+    )
+
+title2 = ctk.CTkLabel(
+    extension_frame,
+    text = "Organize by extension",
+    font = ("Times New Roman", 24, "italic"),
+    text_color="#51E1EC"
+)
+title2.pack(pady=25)
+
+
+# ORGANZE BUTTON
+ex_org_button = ctk.CTkButton(
+    extension_frame, 
+    text="🔁 Organize Files", 
+    command= extension_organize,
+    width = 200,
+    height = 50,
+    corner_radius = 15,
+    font = ("Times New Roman", 16),                   
+    fg_color = "#0C0F6B",                   
+    hover_color = "#303387",
+    text_color= "#51E1EC"           
+    )
+ex_org_button.pack(pady=10)
+
+# FOLDER SELECTION BUTTON
+browse_button = ctk.CTkButton(
+    extension_frame,
+    text="📂 Choose Folder",
+    command=choose_folder,
+    width = 200,
+    height = 50,
+    corner_radius = 15,
+    font = ("Times New Roman", 16),                   
+    fg_color = "#3357C2",                   
+    hover_color = "#1438A4",  
+    text_color="#809CF1"
+    )
+browse_button.pack(pady = 30)
+
+# FOLDER LABEL 
+folder_label_extension = ctk.CTkLabel(
+    extension_frame, 
+    text="No folder selected",
+    font = ("Segoe UI", 14, "bold"),
+    text_color = "#363938",
+    fg_color = "#398DA4",
+    corner_radius = 10,
+    width = 400,
+    height = 40
+    )
+folder_label_extension.pack(pady=10)
+
+back_button = ctk.CTkButton(
+    extension_frame,
+    text = "",
+    image = extension_back_icon,
+    width = 40,
+    command = back_btn,
+    fg_color="transparent"
+)
+back_button.place(x=15, y=15)
+
+#########################################################info frame
+info_frame = ctk.CTkFrame(
+    app,
+    fg_color="#064B3C"
+    )
+
+title3 = ctk.CTkLabel(
+    info_frame,
+    text = "About",
+    font = ("Times New Roman", 24, "italic", "bold"),
+    text_color="#71bdac"
+)
+title3.pack(pady=15)
+
+description1 = ctk.CTkLabel(
+    info_frame,
+    text="""File Organizer is a simple application that helps you sort your files into folders.
+
+    
+    Current features include automatic sorting (by name or extension) or custom name sorting.
+
+    
+    If you find any bugs or issues please contact me on GitHub (michou230)
+
+    
+    You can use this app however you want as long as you follow the License set with it.
+
+    
+    Enjoy ^^
+
+    
+    Hope it actually helped :p
+""",
+    font=("Times New Roman", 14),
+    wraplength=515,
+    justify="center",
+    text_color="#94c9b9"
+)
+
+description1.pack(pady=20)
+
+
+back_button = ctk.CTkButton(
+    info_frame,
+    text = "",
+    image = info_back_icon,
+    width = 40,
+    command = back_btn,
+    fg_color="transparent"
+)
+back_button.place(x=15, y=15)
+
+#EXE
+app.mainloop()
